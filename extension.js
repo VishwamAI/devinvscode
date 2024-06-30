@@ -182,9 +182,10 @@ async function updateAIModel(feedback, context) {
             model = await tf.loadLayersModel(`file://${modelPath}`);
         } else {
             model = tf.sequential();
-            model.add(tf.layers.dense({ units: 10, activation: 'relu', inputShape: [1] }));
+            model.add(tf.layers.dense({ units: 64, activation: 'relu', inputShape: [1] }));
+            model.add(tf.layers.dense({ units: 32, activation: 'relu' }));
             model.add(tf.layers.dense({ units: 1 }));
-            model.compile({ optimizer: 'sgd', loss: 'meanSquaredError' });
+            model.compile({ optimizer: 'adam', loss: 'meanSquaredError' });
         }
     } catch (err) {
         console.error('Error loading or creating the model:', err);
@@ -197,7 +198,7 @@ async function updateAIModel(feedback, context) {
 
     // Train the model
     try {
-        await model.fit(xs, ys, { epochs: 10 });
+        await model.fit(xs, ys, { epochs: 50, batchSize: 1, shuffle: true });
         // Save the updated model
         await model.save(`file://${modelPath}`);
         console.log('Model updated and saved successfully.');
@@ -213,18 +214,37 @@ function deactivate() {}
  * @param {string} prompt - The user prompt.
  * @returns {string} - The generated code.
  */
-function generateCodeFromPrompt(prompt) {
-    // Placeholder for AI model integration
-    // Initialize the AI model (stub)
-    const aiModel = {
-        generateCode: function(prompt) {
-            // Placeholder logic for AI code generation
-            return `// Generated code for prompt: ${prompt}\nconsole.log("This is a placeholder for generated code.");`;
-        }
-    };
+async function generateCodeFromPrompt(prompt, context) {
+    const tf = require('@tensorflow/tfjs-node');
+    const fs = require('fs');
+    const modelPath = context.asAbsolutePath('model.json');
 
-    // The AI model will generate code based on the user prompt
-    const generatedCode = aiModel.generateCode(prompt);
+    // Load the pre-trained model
+    let model;
+    try {
+        if (fs.existsSync(modelPath)) {
+            model = await tf.loadLayersModel(`file://${modelPath}`);
+        } else {
+            throw new Error('Model not found. Please train the model first.');
+        }
+    } catch (err) {
+        console.error('Error loading the model:', err);
+        return `// Error loading the model: ${err.message}`;
+    }
+
+    // Prepare the input tensor
+    const inputTensor = tf.tensor2d([prompt], [1, prompt.length]);
+
+    // Generate code using the model
+    let generatedCode;
+    try {
+        const outputTensor = model.predict(inputTensor);
+        generatedCode = outputTensor.dataSync()[0];
+    } catch (err) {
+        console.error('Error generating code:', err);
+        return `// Error generating code: ${err.message}`;
+    }
+
     return generatedCode;
 }
 
