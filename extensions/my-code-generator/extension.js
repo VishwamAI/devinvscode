@@ -58,7 +58,15 @@ async function activate(context) {
         }
     });
 
-    context.subscriptions.push(disposable, createFolderDisposable, provideFeedbackDisposable);
+    // Register the openPrompt command
+    const openPromptDisposable = vscode.commands.registerCommand('code-agent.openPrompt', async () => {
+        const prompt = await vscode.window.showInputBox({ prompt: 'Enter your prompt' });
+        if (prompt) {
+            vscode.window.showInformationMessage(`You entered: ${prompt}`);
+        }
+    });
+
+    context.subscriptions.push(disposable, createFolderDisposable, provideFeedbackDisposable, openPromptDisposable);
 }
 
 async function loadOrCreateModel() {

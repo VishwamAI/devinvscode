@@ -24,6 +24,17 @@
       {
         "command": "code-agent.provideFeedback",
         "title": "Provide Feedback"
+      },
+      {
+        "command": "code-agent.openPrompt",
+        "title": "Open Prompt"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "code-agent.openPrompt",
+        "key": "ctrl+i",
+        "when": "editorTextFocus"
       }
     ]
   },
