@@ -182,9 +182,10 @@ async function updateAIModel(feedback, context) {
             model = await tf.loadLayersModel(`file://${modelPath}`);
         } else {
             model = tf.sequential();
-            model.add(tf.layers.dense({ units: 10, activation: 'relu', inputShape: [1] }));
+            model.add(tf.layers.dense({ units: 64, activation: 'relu', inputShape: [1] }));
+            model.add(tf.layers.dense({ units: 32, activation: 'relu' }));
             model.add(tf.layers.dense({ units: 1 }));
-            model.compile({ optimizer: 'sgd', loss: 'meanSquaredError' });
+            model.compile({ optimizer: 'adam', loss: 'meanSquaredError' });
         }
     } catch (err) {
         console.error('Error loading or creating the model:', err);
@@ -197,7 +198,7 @@ async function updateAIModel(feedback, context) {
 
     // Train the model
     try {
-        await model.fit(xs, ys, { epochs: 10 });
+        await model.fit(xs, ys, { epochs: 50, batchSize: 1, shuffle: true });
         // Save the updated model
         await model.save(`file://${modelPath}`);
         console.log('Model updated and saved successfully.');
