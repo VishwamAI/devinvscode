@@ -1,0 +1,9 @@
+Package: devincode
+Version: 1.0.0
+Section: editors
+Priority: optional
+Architecture: all
+Depends: nodejs (>= 20.15.0), yarn
+Maintainer: VishwamAI <info@vishwamai.com>
+Description: DevinCode Editor
+ A powerful code editor designed to automate various aspects of the coding process, including code generation, project planning, and terminal operations.
