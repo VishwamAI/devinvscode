@@ -61,7 +61,7 @@ DevinCode is a fully automated code editor similar to Visual Studio Code, design
 
 2. Install dependencies:
    ```bash
-   yarn install
+   yarn install --ignore-scripts
    ```
 
 3. Compile the editor:
@@ -82,6 +82,13 @@ DevinCode is a fully automated code editor similar to Visual Studio Code, design
    - `DevinCode: Plan Project`
    - `DevinCode: Execute Terminal Command`
    - `DevinCode: Provide Feedback`
+   - `DevinCode: Open Prompt`
+
+## GitHub Actions Workflow
+A basic GitHub Actions workflow has been added to the project. This workflow is triggered on push and pull request events and currently contains a single job that checks out the code and runs a simple echo command. The workflow file is located at `.github/workflows/main.yml`.
+
+## Hugging Face Integration
+A directory named `huggingface_integration` has been created within the project workspace to manage resources or repositories from Hugging Face. Further instructions will be provided for integrating specific Hugging Face resources into the "DevinCode" editor.
 
 ## Contributing
 We welcome contributions to improve DevinCode. Please follow the guidelines in the `CONTRIBUTING.md` file.
