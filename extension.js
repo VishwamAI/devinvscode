@@ -156,17 +156,16 @@ function deactivate() {}
  * @param {string} prompt - The user prompt.
  * @returns {string} - The generated code.
  */
+/**
+ * Generate code based on the user prompt.
+ * @param {string} prompt - The user prompt.
+ * @returns {string} - The generated code.
+ */
 function generateCodeFromPrompt(prompt) {
-	// Basic interpretation mechanism for generating code based on the prompt
-	if (prompt.includes('hello world')) {
-		return `console.log("Hello, world!");`;
-	} else if (prompt.includes('function')) {
-		return `function myFunction() {\n\t// TODO: Implement function logic\n}`;
-	} else if (prompt.includes('class')) {
-		return `class MyClass {\n\tconstructor() {\n\t\t// TODO: Implement constructor logic\n\t}\n}`;
-	} else {
-		return `// Generated code for prompt: ${prompt}\nconsole.log("This is a placeholder for generated code.");`;
-	}
+    // Placeholder for AI model integration
+    // The AI model will generate code based on the user prompt
+    const generatedCode = aiModel.generateCode(prompt);
+    return generatedCode;
 }
 
 module.exports = {
