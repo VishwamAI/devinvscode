@@ -45,6 +45,22 @@ Devinvscode is a fully automated VS Code environment designed to enhance your de
 6. **Provide Feedback**:
    Use the command `code-agent.provideFeedback` to rate the usefulness of the generated code and help improve the AI model.
 
+## Troubleshooting
+If you encounter any issues while using "devinvscode", here are some common solutions:
+- **Node.js version issues**: Ensure you have Node.js v20 LTS installed. Use NVM to manage Node.js versions.
+- **Extension activation issues**: Make sure to reload the VS Code window after installing the extension.
+- **Command not found**: Verify that the extension is activated and the commands are correctly typed.
+
+## Detailed Usage Examples
+1. **Generate Code Example**:
+   Open the command palette (Ctrl+Shift+P) and type `code-agent.generateCode`. Enter a prompt like "Create a function to add two numbers in Python" and the extension will generate the corresponding code.
+
+2. **Create Folders Example**:
+   Open the command palette (Ctrl+Shift+P) and type `code-agent.createFolder`. Enter the folder name and the extension will create the folder in your workspace.
+
+## Self-Reinforcement Learning
+The AI model in "devinvscode" learns from user feedback to improve its code generation capabilities. When you provide feedback using the `code-agent.provideFeedback` command, the model updates its parameters based on the rating you provide. Over time, this helps the model generate more accurate and useful code.
+
 ## Contributing
 We welcome contributions to the devinvscode project. Please follow these steps to contribute:
 1. Fork the repository.
