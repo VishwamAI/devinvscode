@@ -89,23 +89,38 @@ function registerCreateFolderCommand(context) {
  * @param {vscode.ExtensionContext} context
  */
 function registerBrowserResearchCommand(context) {
-	const browserResearchDisposable = vscode.commands.registerCommand('code-agent.browserResearch', function () {
-		try {
-			vscode.window.showInputBox({ prompt: 'Enter URL to research' }).then(url => {
-				if (url) {
-					vscode.env.openExternal(vscode.Uri.parse(url)).then(() => {
-						vscode.window.showInformationMessage(`Opened browser to research URL: ${url}`);
-					}).catch(error => {
-						vscode.window.showErrorMessage(`Error opening browser: ${error.message}`);
-					});
-				}
-			});
-		} catch (error) {
-			vscode.window.showErrorMessage(`Error opening browser: ${error.message}`);
-		}
-	});
+    const browserResearchDisposable = vscode.commands.registerCommand('code-agent.browserResearch', function () {
+        try {
+            const editor = vscode.window.activeTextEditor;
+            if (editor) {
+                const document = editor.document;
+                const selection = editor.selection;
+                const selectedText = document.getText(selection);
 
-	context.subscriptions.push(browserResearchDisposable);
+                // Generate a search query based on the selected text or the content of the active file
+                const searchQuery = selectedText || document.getText();
+
+                // Encode the search query for use in a URL
+                const encodedQuery = encodeURIComponent(searchQuery);
+
+                // Construct the search URL (using Google as an example)
+                const searchUrl = `https://www.google.com/search?q=${encodedQuery}`;
+
+                // Open the search URL in the default browser
+                vscode.env.openExternal(vscode.Uri.parse(searchUrl)).then(() => {
+                    vscode.window.showInformationMessage(`Opened browser to research query: ${searchQuery}`);
+                }).catch(error => {
+                    vscode.window.showErrorMessage(`Error opening browser: ${error.message}`);
+                });
+            } else {
+                vscode.window.showErrorMessage('No active editor found.');
+            }
+        } catch (error) {
+            vscode.window.showErrorMessage(`Error performing research: ${error.message}`);
+        }
+    });
+
+    context.subscriptions.push(browserResearchDisposable);
 }
 
 /**
@@ -233,13 +248,13 @@ async function generateCodeFromPrompt(prompt, context) {
     }
 
     // Prepare the input tensor
-    const inputTensor = tf.tensor2d([prompt], [1, prompt.length]);
+    const inputTensor = tf.tensor2d([prompt.split('').map(char => char.charCodeAt(0))], [1, prompt.length]);
 
     // Generate code using the model
     let generatedCode;
     try {
         const outputTensor = model.predict(inputTensor);
-        generatedCode = outputTensor.dataSync()[0];
+        generatedCode = String.fromCharCode(...outputTensor.dataSync());
     } catch (err) {
         console.error('Error generating code:', err);
         return `// Error generating code: ${err.message}`;
