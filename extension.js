@@ -139,13 +139,27 @@ function registerProvideFeedbackCommand(context) {
 	const provideFeedbackDisposable = vscode.commands.registerCommand('code-agent.provideFeedback', function () {
 		vscode.window.showQuickPick(['1', '2', '3', '4', '5'], { placeHolder: 'Rate the usefulness of the generated code (1-5)' }).then(rating => {
 			if (rating) {
-				// Log the feedback (for now, we'll just print it to the console)
-				console.log(`User feedback rating: ${rating}`);
-				vscode.window.showInformationMessage(`Thank you for your feedback! You rated the code ${rating}/5.`);
+				// Log the feedback to a JSON file
+				const feedback = { rating: rating, timestamp: new Date().toISOString() };
+				const fs = require('fs');
+				const feedbackFilePath = context.asAbsolutePath('feedback.json');
+				fs.readFile(feedbackFilePath, 'utf8', (err, data) => {
+					let feedbackData = [];
+					if (!err && data) {
+						feedbackData = JSON.parse(data);
+					}
+					feedbackData.push(feedback);
+					fs.writeFile(feedbackFilePath, JSON.stringify(feedbackData, null, 2), 'utf8', (err) => {
+						if (err) {
+							vscode.window.showErrorMessage(`Error saving feedback: ${err.message}`);
+						} else {
+							vscode.window.showInformationMessage(`Thank you for your feedback! You rated the code ${rating}/5.`);
+						}
+					});
+				});
 			}
 		});
 	});
-
 	context.subscriptions.push(provideFeedbackDisposable);
 }
 
