@@ -154,6 +154,9 @@ function registerProvideFeedbackCommand(context) {
 							vscode.window.showErrorMessage(`Error saving feedback: ${err.message}`);
 						} else {
 							vscode.window.showInformationMessage(`Thank you for your feedback! You rated the code ${rating}/5.`);
+
+							// Update the AI model based on the feedback
+							updateAIModel(feedback);
 						}
 					});
 				});
@@ -161,6 +164,16 @@ function registerProvideFeedbackCommand(context) {
 		});
 	});
 	context.subscriptions.push(provideFeedbackDisposable);
+}
+
+/**
+ * Update the AI model based on user feedback.
+ * @param {Object} feedback - The feedback object containing the rating and timestamp.
+ */
+function updateAIModel(feedback) {
+	// Placeholder for AI model update logic
+	console.log(`Updating AI model with feedback: ${JSON.stringify(feedback)}`);
+	// Implement the logic to update the AI model based on the feedback
 }
 
 function deactivate() {}
