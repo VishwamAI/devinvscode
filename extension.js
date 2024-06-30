@@ -156,7 +156,7 @@ function registerProvideFeedbackCommand(context) {
 							vscode.window.showInformationMessage(`Thank you for your feedback! You rated the code ${rating}/5.`);
 
 							// Update the AI model based on the feedback
-							updateAIModel(feedback);
+							updateAIModel(feedback, context);
 						}
 					});
 				});
@@ -170,10 +170,40 @@ function registerProvideFeedbackCommand(context) {
  * Update the AI model based on user feedback.
  * @param {Object} feedback - The feedback object containing the rating and timestamp.
  */
-function updateAIModel(feedback) {
-	// Placeholder for AI model update logic
-	console.log(`Updating AI model with feedback: ${JSON.stringify(feedback)}`);
-	// Implement the logic to update the AI model based on the feedback
+async function updateAIModel(feedback, context) {
+    const tf = require('@tensorflow/tfjs-node');
+    const fs = require('fs');
+    const modelPath = context.asAbsolutePath('model.json');
+
+    // Load or create the model
+    let model;
+    try {
+        if (fs.existsSync(modelPath)) {
+            model = await tf.loadLayersModel(`file://${modelPath}`);
+        } else {
+            model = tf.sequential();
+            model.add(tf.layers.dense({ units: 10, activation: 'relu', inputShape: [1] }));
+            model.add(tf.layers.dense({ units: 1 }));
+            model.compile({ optimizer: 'sgd', loss: 'meanSquaredError' });
+        }
+    } catch (err) {
+        console.error('Error loading or creating the model:', err);
+        return;
+    }
+
+    // Prepare the training data
+    const xs = tf.tensor2d([parseInt(feedback.rating)], [1, 1]);
+    const ys = tf.tensor2d([parseInt(feedback.rating)], [1, 1]); // Use the rating as the target value
+
+    // Train the model
+    try {
+        await model.fit(xs, ys, { epochs: 10 });
+        // Save the updated model
+        await model.save(`file://${modelPath}`);
+        console.log('Model updated and saved successfully.');
+    } catch (err) {
+        console.error('Error training or saving the model:', err);
+    }
 }
 
 function deactivate() {}
