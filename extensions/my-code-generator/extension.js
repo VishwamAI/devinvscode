@@ -58,7 +58,22 @@ async function activate(context) {
         }
     });
 
-    context.subscriptions.push(disposable, createFolderDisposable, provideFeedbackDisposable);
+    // Register the openPrompt command
+    const openPromptDisposable = vscode.commands.registerCommand('code-agent.openPrompt', async () => {
+        const prompt = await vscode.window.showInputBox({ prompt: 'Enter your prompt' });
+        if (prompt) {
+            vscode.window.showInformationMessage(`You entered: ${prompt}`);
+        }
+    });
+
+    context.subscriptions.push(disposable, createFolderDisposable, provideFeedbackDisposable, openPromptDisposable);
+
+    // Register keybinding for Ctrl+I to open the prompt
+    vscode.commands.registerKeybinding({
+        command: 'code-agent.openPrompt',
+        key: 'ctrl+i',
+        when: 'editorTextFocus'
+    });
 }
 
 async function loadOrCreateModel() {
