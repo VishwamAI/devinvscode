@@ -31,6 +31,31 @@ This guide provides instructions on how to use the "DevinCode" editor, including
    yarn start
    ```
 
+### Troubleshooting
+If you encounter issues with the Node.js version dependency when installing `devincode.deb`, follow these steps to resolve the problem:
+
+1. Install `nvm` (Node Version Manager):
+   ```bash
+   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+   source ~/.nvm/nvm.sh
+   ```
+
+2. Install the required Node.js version using `nvm`:
+   ```bash
+   nvm install 20
+   nvm use 20
+   ```
+
+3. Verify the Node.js version:
+   ```bash
+   node -v
+   ```
+
+4. Reinstall the `devincode.deb` package:
+   ```bash
+   sudo dpkg -i devincode.deb
+   ```
+
 ## Features
 
 ### Auto Coding
