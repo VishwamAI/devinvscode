@@ -1,4 +1,4 @@
-name: Basic Workflow
+name: CI/CD Workflow
 
 on: [push, pull_request]
 
@@ -7,5 +7,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Run a one-line script
-      run: echo "This is a basic workflow file for the DevinCode editor."
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '20.15.0'
+
+    - name: Install dependencies
+      run: yarn install --ignore-scripts
+
+    - name: Compile the code
+      run: yarn compile
+
+    - name: Run tests
+      run: yarn test
+
+    - name: Package the application
+      run: dpkg-deb --build devincode
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: devincode.deb
+        path: devincode.deb
